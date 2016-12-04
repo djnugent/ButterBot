@@ -1,3 +1,4 @@
-[submodule "android"]
-	path = android
+
+[submodule "butterbot-app"]
+	path = butterbot-app
 	url = git://github.com/djnugent/butterbot-app
