@@ -16,6 +16,8 @@
 #define CTRL_LIST_MODE  0x06        //activate listen mode  - {}
 #define BATT_LVL        0x07        //Battery Level
 #define ATTACH_NECK     0x08        //Activate the neck
+#define OPENMV_ENABLE   0x09        //Enable OpenMV tracking
+#define OPENMV_POS      0x0A        //OpenMV position packet
 
 //Sources
 #define SRC_USB         0           //Commands came from USB

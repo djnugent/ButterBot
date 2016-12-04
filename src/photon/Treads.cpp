@@ -2,8 +2,8 @@
 
 
 
-
 void Treads::attach(int baud, int min_spd, int max_spd){
+  //Uses Serial1 TX. RX is used by OpenMV
     Serial1.begin(baud);
     Serial1.write(0x82); //clear errors
 
