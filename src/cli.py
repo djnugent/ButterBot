@@ -5,6 +5,10 @@ import time
 import threading
 
 
+######Command Line interface for testing butterbot over USB/TCP#####################
+
+
+
 class butterbot():
 
     CMD_ERROR      = 0x00        #Invalid command
@@ -110,7 +114,7 @@ if __name__ == "__main__":
                     print("    neck  [us]                                       #controls neck")
                     print("    led   on/off/talk/batt/connect/blink{blink rate} #controls led")
                     print("    play  [track number]                             #plays audio")
-                    print("    batt                                             #requests battery status")
+                    print("    batt                                             #displays battery status")
                     print("    listen                                           #put photon into listen mode")
                     print("    exit                                             #exit CLI")
 
@@ -172,24 +176,6 @@ if __name__ == "__main__":
                 elif cmd == 'listen':
                     bb.send_command(bb.CTRL_LIST_MODE,0,0)
 
-                elif cmd == "sweep":
-                    if len(cli) == 3:
-                        rate = int(cli[1])
-                        step = int(cli[2])
-                        for i in range(0,1):
-                            for j in range(1000,2000,step):
-                                bb.send_command(bb.CTRL_ARMS,int(j),int(j))
-                                time.sleep(1.0/rate)
-                            for j in range(2000,1000,-step):
-                                bb.send_command(bb.CTRL_ARMS,int(j),int(j))
-                                time.sleep(1.0/rate)
-
-
-                    else:
-                        print("invalid usage")
-
-
-
                 elif cmd == "demo":
                     #look up
                     bb.send_command(bb.CTRL_NECK,1900,0)
@@ -216,10 +202,6 @@ if __name__ == "__main__":
                     bb.send_command(bb.CTRL_NECK,1100,0)
                     #bb.send_command(bb.CTRL_ARMS,1500,1500)
                     bb.send_command(bb.CTRL_AUDIO,3,0)
-
-
-
-
 
 
                 elif cmd == "exit":
