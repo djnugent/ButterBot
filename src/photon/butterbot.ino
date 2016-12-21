@@ -2,6 +2,7 @@
 #include "Audio.h"
 #include "Treads.h"
 #include "SmoothServo.h"
+#include "OpenMV.h"
 #include "define.h"
 #include "Safe_Connect.h"
 #include "Serial2/Serial2.h"
@@ -10,7 +11,6 @@
 SYSTEM_THREAD(ENABLED);  //Allows for special wifi config DURING setup
 SYSTEM_MODE(SEMI_AUTOMATIC); //Allows for custom wifi
 //////////DO NOT CHANGE////////////
-
 
 //LED
 LED led;
@@ -47,6 +47,7 @@ Timer servo_timer(int(1000/SERVO_UPDATE_RATE), update_servos);
 Timer base_timer(int(1000/TREADS_UPDATE_RATE), update_base);
 
 
+
 void setup() {
 
     //USB debug
@@ -68,6 +69,9 @@ void setup() {
     //attach the servos
     armR.attach(RIGHT_ARM_PIN,1500);
     armL.attach(LEFT_ARM_PIN,1500);
+    digitalWrite(NECK_PIN, LOW);
+    pinMode(NECK_PIN, OUTPUT); // drive low
+    digitalWrite(NECK_PIN, LOW);
 
     //limit their speeds
     armR.set_max_us_per_sec(4000);
@@ -101,7 +105,7 @@ void loop() {
   led.update();
 
   //update camera
-  camera.update();
+  camera.update(&server);
 
   //check battery
   check_battery();
@@ -241,6 +245,8 @@ void process_command(byte *buffer, int cmd_src){
         case ATTACH_NECK:{
             if(arg1 == 0){
                 neck.detach();
+                digitalWrite(NECK_PIN, LOW);
+                pinMode(NECK_PIN, OUTPUT); // drive low
             }
             else if (arg1 ==1){
                 neck.attach(NECK_PIN,1050);

@@ -3,6 +3,10 @@ import struct
 import socket
 import time
 import threading
+import traceback
+import sys
+import argparse
+
 
 
 ######Command Line interface for testing butterbot over USB/TCP#####################
@@ -20,6 +24,8 @@ class butterbot():
     CTRL_LIST_MODE = 0x06        #activate listen mode  - {}
     BATT_LVL       = 0x07        #Battery Level
     ATTACH_NECK    = 0x08        #Activate the neck
+    OPENMV_ENABLE  = 0x09        #Enable OpenMV tracking- {0/1}
+    OPENMV_POS     = 0x0A        #OpenMV position packet
 
 
     LED_MODE_TALK   = 0x00        #Flash LED while talking
@@ -33,6 +39,7 @@ class butterbot():
         self.ser = None
         self.tcp = None
         self.batt_level = None
+        self.stream_camera = False
         #request battery status
         t = threading.Thread(target=self.check_battery)
         t.start()
@@ -76,18 +83,21 @@ class butterbot():
                 arg2 = (raw[3] << 8) | raw[4]
                 if(cmd_id  == self.BATT_LVL):
                     self.batt_level = arg1
+                elif(self.stream_camera and cmd_id == self.OPENMV_POS):
+                    print(arg1,arg2)
                 else:
                     print((hex(cmd_id),arg1,arg2,raw))
 
     def check_battery(self):
         while(True):
             self.send_command(self.BATT_LVL,0,0)
-            time.sleep(0.25)
+            time.sleep(0.15)
 
     def close(self):
         if(self.ser is not None):
             self.ser.close()
         if(self.tcp is not None):
+            self.send_command(self.OPENMV_ENABLE, 0,0)
             self.tcp.close()
 
 
@@ -95,11 +105,25 @@ class butterbot():
 
 if __name__ == "__main__":
 
-    bb = butterbot()
-    #bb.start_serial('COM7',115200)
-    bb.start_tcp("192.168.1.123",88)
-    #run a CLI for managing users
 
+    bb = butterbot()
+
+    parser = argparse.ArgumentParser(description='Command line interface for testing butterbot')
+    parser.add_argument('connection_string', action="store", help="Serial port or IP address")
+    parser.add_argument('--baud', default=115200, help="Serial port baud")
+    parser.add_argument('--port', default=88, help="TCP port")
+    args = parser.parse_args()
+
+    #TCP connnection
+    if(args.connection_string.count('.') == 3):
+        bb.start_tcp(args.connection_string,args.port)
+        print("Connected on {}:{}".format(args.connection_string,args.port))
+    #Serial Connection
+    else:
+        bb.start_serial(args.connection_string,args.baud)
+        print("Connected on {}:{}".format(args.connection_string,args.baud))
+
+    #run a CLI for managing users
     exit = False
     while not exit:
         try:
@@ -138,6 +162,7 @@ if __name__ == "__main__":
                     if len(cli) == 2:
                         if cli[1] == 'enable':
                             bb.send_command(bb.ATTACH_NECK,1,0)
+                            bb.send_command(bb.CTRL_NECK,1500,0)
                         elif cli[1] == 'disable':
                             bb.send_command(bb.ATTACH_NECK,0,0)
                         else:
@@ -173,8 +198,22 @@ if __name__ == "__main__":
                 elif cmd == "batt":
                     print(bb.batt_level)
 
-                elif cmd == 'listen':
+                elif cmd == "listen":
                     bb.send_command(bb.CTRL_LIST_MODE,0,0)
+
+                elif cmd == "camera":
+                    if len(cli) == 2:
+                        if cli[1] == "stream":
+                            bb.stream_camera = True;
+                            bb.send_command(bb.OPENMV_ENABLE,1,0)
+                        elif cli[1] == "stop":
+                            bb.stream_camera = False;
+                            bb.send_command(bb.OPENMV_ENABLE,0,0)
+                        else:
+                            print("invalid usage")
+                    else:
+                        print("invalid usage")
+
 
                 elif cmd == "demo":
                     #look up
@@ -212,5 +251,3 @@ if __name__ == "__main__":
 
         except KeyboardInterrupt:
             exit = True
-
-bb.close()

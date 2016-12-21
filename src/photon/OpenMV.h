@@ -2,6 +2,7 @@
 #define OPENMV_H__
 
 #include <Particle.h>
+#include "define.h"
 
 #define START_FRAME 0xFF
 #define MV_PACKET_SIZE 5
@@ -17,7 +18,8 @@ class OpenMV {
       int fps = 0;
 
     public:
-        void update();
+        void init();
+        void update(TCPServer *serv);
         void enable_tracking();
         void disable_tracking();
 };

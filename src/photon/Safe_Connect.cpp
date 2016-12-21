@@ -21,11 +21,12 @@ void safe_connect(){
 
 void listen(){
     digitalWrite(LED_PIN,HIGH);
-    WiFi.off();
-    WiFi.listen(); //Takes 10 seconds for network to appear
+    WiFi.on();
+    SINGLE_THREADED_BLOCK() {
+      WiFi.listen(); //Takes up to 10 seconds for network to appear
+    }
 
     //Wait for the device to connect to new network
     waitUntil(WiFi.ready);
     System.reset();
-
 }

@@ -5,6 +5,7 @@
 void Treads::attach(int baud, int min_spd, int max_spd){
   //Uses Serial1 TX. RX is used by OpenMV
     Serial1.begin(baud);
+    Serial1.write(0xAA);
     Serial1.write(0x82); //clear errors
 
     min_speed = min_spd;
@@ -19,7 +20,6 @@ void Treads::set_motors(int spd0, int spd1){
 
 
 void Treads::update(){
-
     bool cst0 = true;
     bool cst1 = true;
 
@@ -44,6 +44,7 @@ void Treads::update(){
     }
 
     write_motors(current_speed0, current_speed1, cst0, cst1);
+    Serial1.flush();
 }
 
 void Treads::write_motors(int spd0, int spd1, bool cst0, bool cst1) {

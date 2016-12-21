@@ -2,8 +2,7 @@
 #include "OpenMV.h"
 
 
-
-void OpenMV::update(){
+void OpenMV::update(TCPServer *serv){
   //Uses Serial1 RX. TX is used by Treads. Make sure treads are attached
   //read serial buffer
   if(Serial1.available()>= MV_PACKET_SIZE){
@@ -21,7 +20,7 @@ void OpenMV::update(){
     cmd[2] = x & 0x00ff; //lsb
     cmd[3] = (y & 0xff00) >> 8; //msb
     cmd[4] = y & 0x00ff; //lsb
-    server.write(cmd,PACKET_SIZE);
+    serv->write(cmd,PACKET_SIZE);
     last_tracking_update = millis();
   }
 }
