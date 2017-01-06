@@ -5,7 +5,6 @@
 void Treads::attach(int baud, int min_spd, int max_spd){
   //Uses Serial1 TX. RX is used by OpenMV
     Serial1.begin(baud);
-    Serial1.write(0xAA);
     Serial1.write(0x82); //clear errors
 
     min_speed = min_spd;
@@ -16,6 +15,8 @@ void Treads::attach(int baud, int min_spd, int max_spd){
 void Treads::set_motors(int spd0, int spd1){
     target_speed0 = spd0 * -1;
     target_speed1 = spd1 * -1;
+    Serial1.write(0x82); //clear errors
+    //Serial1.flush();
 }
 
 
@@ -44,7 +45,6 @@ void Treads::update(){
     }
 
     write_motors(current_speed0, current_speed1, cst0, cst1);
-    Serial1.flush();
 }
 
 void Treads::write_motors(int spd0, int spd1, bool cst0, bool cst1) {
@@ -115,10 +115,12 @@ void Treads::set_params(byte pwm_mode, int timeout) {
      2 = low-frequency, 7-bit mode (PWM frequency of 7.8 kHz)
      3 = low-frequency, 8-bit mode (PWM frequency of 3.9 kHz)
   */
+  /*
   if (pwm_mode >= 0 && pwm_mode <= 3) {
     byte cmd[5] = {0x84, 0x01, pwm_mode, 0x55, 0x2A};
     Serial1.write(cmd,5);
   }
+  */
 
   /*Timeout
      timeout is specified in 0.262 sec intervals

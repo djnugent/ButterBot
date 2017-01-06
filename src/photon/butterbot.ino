@@ -57,8 +57,8 @@ void setup() {
     speaker.init(9600);
 
     //Init base
-    base.attach(38400,-70,70);
-    base.set_params(1, 8);
+    base.attach(38400,-100,100);
+    base.set_params(1, 0);
 
     //LED
     led.init(LED_PIN);
@@ -67,11 +67,8 @@ void setup() {
     pinMode(BATT_PIN,INPUT);
 
     //attach the servos
-    armR.attach(RIGHT_ARM_PIN,1500);
-    armL.attach(LEFT_ARM_PIN,1500);
-    digitalWrite(NECK_PIN, LOW);
-    pinMode(NECK_PIN, OUTPUT); // drive low
-    digitalWrite(NECK_PIN, LOW);
+    armR.attach(RIGHT_ARM_PIN,1000);
+    armL.attach(LEFT_ARM_PIN,2000);
 
     //limit their speeds
     armR.set_max_us_per_sec(4000);
@@ -170,6 +167,8 @@ void check_tcp(){
         else{
             led.set_LED(LED_MODE_CNCT,0);
         }
+        armL.set_us(2000);
+        armR.set_us(1000);
         neck.detach();
         base.set_motors(0,0);
         just_connected = true;
@@ -244,9 +243,9 @@ void process_command(byte *buffer, int cmd_src){
             break;}
         case ATTACH_NECK:{
             if(arg1 == 0){
+                //neck.set_us(1100);
+                //delay(1500);
                 neck.detach();
-                digitalWrite(NECK_PIN, LOW);
-                pinMode(NECK_PIN, OUTPUT); // drive low
             }
             else if (arg1 ==1){
                 neck.attach(NECK_PIN,1050);

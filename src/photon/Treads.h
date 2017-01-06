@@ -15,7 +15,7 @@
 #define QIK_2S9V1_MOTOR_M0_COAST         0x86
 #define QIK_2S9V1_MOTOR_M1_COAST         0x87
 
-#define TREADS_UPDATE_RATE 50
+#define TREADS_UPDATE_RATE 20
 #define MAX_ACCEL 100
 
 class Treads{
