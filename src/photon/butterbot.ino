@@ -2,7 +2,6 @@
 #include "Audio.h"
 #include "Treads.h"
 #include "SmoothServo.h"
-#include "OpenMV.h"
 #include "define.h"
 #include "Safe_Connect.h"
 #include "Serial2/Serial2.h"
@@ -26,8 +25,6 @@ Treads base;
 //sound
 Audio speaker;
 
-//OpenMV camera
-OpenMV camera;
 
 //battery
 int batt_level = 1000;
@@ -100,9 +97,6 @@ void loop() {
 
   //update LED
   led.update();
-
-  //update camera
-  //camera.update(&server);
 
   //check battery
   check_battery();
@@ -249,14 +243,6 @@ void process_command(byte *buffer, int cmd_src){
             }
             else if (arg1 ==1){
                 neck.attach(NECK_PIN,1050);
-            }
-            break;}
-        case OPENMV_ENABLE:{
-            if(arg1 == 0){
-              camera.disable_tracking();
-            }
-            else if (arg1 ==1){
-              camera.enable_tracking();
             }
             break;}
         default:{ //Invalid Command
