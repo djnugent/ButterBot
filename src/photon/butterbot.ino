@@ -102,7 +102,7 @@ void loop() {
   led.update();
 
   //update camera
-  //camera.update(&server);
+  camera.update(&server);
 
   //check battery
   check_battery();
