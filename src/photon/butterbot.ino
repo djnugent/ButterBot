@@ -37,6 +37,7 @@ TCPClient client;
 int just_connected = true;
 int last_publish = 0;
 int last_packet = 0;
+int last_heartbeat = 0;
 
 //timer to update servos
 Timer servo_timer(int(1000/SERVO_UPDATE_RATE), update_servos);
@@ -136,6 +137,7 @@ void check_tcp(){
     //check for client disconnect
     else if(millis()-last_packet > TCP_TIMEOUT){
         client.stop();
+        speaker.play(0,&led);
     }
   }//Wait for connection from app
   else {
@@ -192,6 +194,18 @@ void check_battery(){
         }
         last_batt_check = millis();
     }
+    if(!just_connected && millis()-last_heartbeat > 200){
+      byte cmd[PACKET_SIZE] = {BATT_LVL,0,0,0,0,'\n'};
+      cmd[1] = (batt_level & 0xff00) >> 8; //msb
+      cmd[2] = batt_level & 0x00ff; //lsb
+      cmd[3] = (batt_low & 0xff00) >> 8; //msb
+      cmd[4] = batt_low & 0x00ff; //lsb
+      server.write(cmd,PACKET_SIZE);
+
+      last_heartbeat = millis();
+    }
+
+
 }
 
 
@@ -223,6 +237,7 @@ void process_command(byte *buffer, int cmd_src){
             listen();
         break;}
         case BATT_LVL:{ //Send battery level
+          /*
             byte cmd[PACKET_SIZE] = {BATT_LVL,0,0,0,0,'\n'};
             cmd[1] = (batt_level & 0xff00) >> 8; //msb
             cmd[2] = batt_level & 0x00ff; //lsb
@@ -234,6 +249,7 @@ void process_command(byte *buffer, int cmd_src){
             else if(cmd_src == SRC_USB){
                 Serial.write(cmd,PACKET_SIZE);
             }
+            */
             break;}
         case ATTACH_NECK:{
             if(arg1 == 0){

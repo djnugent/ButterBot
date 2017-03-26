@@ -2,7 +2,7 @@
 #define DEFINE_H__
 
 #define WIFI_TIMEOUT    5000        //5 seconds
-#define TCP_TIMEOUT     1500        //1.5 second of app disconnecting
+#define TCP_TIMEOUT     2000        //1.5 second of app disconnecting
 #define PACKET_SIZE     6           //byte(1) + int(2) + int(2) + NL(1)
 #define TCP_PORT        88          //TCP port for app
 
