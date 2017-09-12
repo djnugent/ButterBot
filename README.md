@@ -1,6 +1,7 @@
 # Butterbot
 ---
-![Video](https://img.youtube.com/vi/BhRFnhcuLr8/0.jpg)](https://youtu.be/BhRFnhcuLr8)
+##### Video
+[![Video](https://img.youtube.com/vi/BhRFnhcuLr8/0.jpg)](https://youtu.be/BhRFnhcuLr8)
 
 ## TL;DR
 
